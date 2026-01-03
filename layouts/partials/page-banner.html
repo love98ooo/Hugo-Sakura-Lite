@@ -1,0 +1,81 @@
+{{- /* Page Banner for non-home pages */ -}}
+{{- $bannerBg := "" -}}
+
+{{- /* Try to get banner from page params */ -}}
+{{- with .Params.cover -}}
+  {{- with .image -}}
+    {{- $bannerBg = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $bannerBg -}}
+  {{- with .Params.banner -}}
+    {{- $bannerBg = . -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Fallback to site default banner */ -}}
+{{- if not $bannerBg -}}
+  {{- with site.Params.bannerImages -}}
+    {{- /* Use page properties to generate a stable seed for each page */ -}}
+    {{- $pathLen := len $.Page.RelPermalink -}}
+    {{- $titleLen := len $.Page.Title -}}
+    {{- $seed := add (mul $pathLen 31) $titleLen -}}
+    {{- $randomIndex := mod $seed (len .) -}}
+    {{- $bannerBg = index . $randomIndex -}}
+  {{- else -}}
+    {{- $bannerBg = site.Params.hero.background -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Article pages show banner with metadata */ -}}
+{{- if and (eq .Kind "page") (or (eq .Type "archives") (eq .Type "posts")) -}}
+<section class="page-banner page-banner--article">
+  <div class="page-banner__background" style="background-image: url('{{ $bannerBg }}');"></div>
+  <div class="page-banner__overlay"></div>
+  <div class="page-banner__content">
+    <h1 class="page-banner__title">{{ .Title }}</h1>
+    <div class="page-banner__meta">
+      {{- /* Author Avatar */ -}}
+      {{- with .Params.author -}}
+      <div class="banner-author">
+        {{- with $.Params.authorAvatar -}}
+        <img src="{{ . }}" alt="{{ $.Params.author }}" class="banner-author__avatar">
+        {{- end -}}
+        <span class="banner-author__name">{{ . }}</span>
+      </div>
+      {{- end -}}
+
+      <span class="banner-meta__separator">·</span>
+
+      {{- /* Posted Date */ -}}
+      <time class="banner-meta__date" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+        Posted on {{ .Date.Format "01-02-2006" }}
+      </time>
+
+      {{- /* Last Modified */ -}}
+      {{- if ne .Date .Lastmod -}}
+      <span class="banner-meta__separator">·</span>
+      <time class="banner-meta__date" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+        Last updated on {{ .Lastmod.Format "01-02-2006" }}
+      </time>
+      {{- end -}}
+
+      {{- /* View Count */ -}}
+      <span class="banner-meta__separator">·</span>
+      <span class="banner-meta__views">{{ .ReadingTime }} min read</span>
+    </div>
+  </div>
+</section>
+{{- else -}}
+<section class="page-banner">
+  <div class="page-banner__background" style="background-image: url('{{ $bannerBg }}');"></div>
+  <div class="page-banner__overlay"></div>
+  <div class="page-banner__content">
+    <h1 class="page-banner__title">{{ .Title }}</h1>
+    {{- with .Description -}}
+    <p class="page-banner__description">{{ . }}</p>
+    {{- end -}}
+  </div>
+</section>
+{{- end -}}
+

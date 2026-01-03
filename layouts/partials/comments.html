@@ -1,0 +1,128 @@
+{{- if and (site.Params.comments.enabled) (ne .Params.comments false) -}}
+{{- $apiUrl := site.Params.comments.apiUrl -}}
+{{- $turnstileSiteKey := site.Params.comments.turnstileSiteKey -}}
+{{- $slug := .RelPermalink | strings.TrimSuffix "/" -}}
+
+{{- /* Load Cloudflare Turnstile */ -}}
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
+{{- with resources.Get "css/comments.css" }}
+  {{- if hugo.IsDevelopment }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{- else }}
+    {{- with . | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* Load comments.js */ -}}
+{{- with resources.Get "js/comments.js" }}
+  {{- $opts := dict
+    "minify" (not hugo.IsDevelopment)
+    "targetPath" "js/comments.js"
+  }}
+  {{- with . | js.Build $opts }}
+    {{- if hugo.IsDevelopment }}
+      <script src="{{ .RelPermalink }}" defer></script>
+    {{- else }}
+      {{- with . | fingerprint }}
+        <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+<section class="comments-section" id="comments" data-api-url="{{ $apiUrl }}" data-post-slug="{{ $slug }}" data-turnstile-sitekey="{{ $turnstileSiteKey }}">
+  <h2 class="comments-title">
+    <svg class="comments-icon" viewBox="0 0 24 24" width="24" height="24">
+      <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+    </svg>
+    评论
+  </h2>
+
+  <!-- 登录状态区域 -->
+  <div class="comments-auth" id="commentsAuth">
+    <!-- 未登录状态 -->
+    <div class="auth-guest" id="authGuest">
+      <p class="auth-hint">登录后即可发表评论</p>
+      <div class="auth-methods">
+        <!-- OTP 邮箱登录 -->
+        <div class="auth-otp">
+          <form class="otp-form" id="otpForm">
+            <div class="otp-input-group">
+              <input type="email" id="otpEmail" placeholder="邮箱地址" required class="otp-input">
+              <input type="text" id="otpDisplayName" placeholder="昵称（可选）" class="otp-input otp-input--name">
+            </div>
+            <div class="otp-code-group" id="otpCodeGroup" style="display: none;">
+              <input type="text" id="otpCode" placeholder="验证码" maxlength="6" class="otp-input otp-input--code">
+              <button type="button" id="otpResend" class="otp-resend" disabled>重新发送</button>
+            </div>
+            <!-- Turnstile Widget -->
+            <div id="turnstileWidget" class="turnstile-widget"></div>
+            <button type="submit" id="otpSubmit" class="auth-btn auth-btn--otp">
+              <svg viewBox="0 0 24 24" width="18" height="18">
+                <path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+              <span id="otpBtnText">发送验证码</span>
+            </button>
+          </form>
+        </div>
+
+        <div class="auth-divider">
+          <span>或</span>
+        </div>
+
+        <!-- GitHub OAuth 登录 -->
+        <button class="auth-btn auth-btn--github" id="githubLogin">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub 登录
+        </button>
+      </div>
+    </div>
+
+    <!-- 已登录状态（隐藏，信息移到表单中） -->
+    <div class="auth-user" id="authUser" style="display: none;">
+      <img class="user-avatar" id="userAvatar" src="" alt="">
+      <span class="user-name" id="userName"></span>
+      <span class="user-email" id="userEmail"></span>
+    </div>
+  </div>
+
+  <!-- 评论输入区域 -->
+  <div class="comments-form" id="commentsForm" style="display: none;">
+    <form id="commentForm">
+      <textarea id="commentContent" placeholder="写下你的评论..." required></textarea>
+      <div class="form-actions">
+        <div class="form-user-info">
+          <span class="form-user-name" id="formUserName"></span>
+          <button type="button" class="form-logout" id="logoutBtn">退出登录</button>
+        </div>
+        <button type="submit" class="submit-btn" id="submitComment">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+          提交评论
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 评论列表 -->
+  <div class="comments-list" id="commentsList">
+    <div class="comments-loading" id="commentsLoading">
+      <div class="loading-spinner"></div>
+      <span>加载中...</span>
+    </div>
+    <div class="comments-empty" id="commentsEmpty" style="display: none;">
+      <svg viewBox="0 0 24 24">
+        <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+      </svg>
+      <p>还没有评论，来抢沙发吧！</p>
+    </div>
+    <div class="comments-count" id="commentsCount" style="display: none;"></div>
+    <div class="comments-container" id="commentsContainer"></div>
+  </div>
+</section>
+{{- end -}}

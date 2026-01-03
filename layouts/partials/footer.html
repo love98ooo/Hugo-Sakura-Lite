@@ -1,0 +1,14 @@
+<div class="footer-sakura">
+  <img src="{{ `/images/sakura.svg` | relURL }}" alt="Sakura" class="footer-sakura-icon no-loading-animation is-loaded">
+</div>
+
+<div class="footer-content">
+  <p class="footer-copyright">
+    © {{ now.Year }}
+    <a href="{{ `/` | relURL }}">{{ site.Title }}</a>
+    {{ with site.Params.author }} · {{ . }}{{ end }}
+  </p>
+  <p class="footer-theme">
+    Theme <a href="https://github.com/love98ooo/Hugo-Sakura-Lite" target="_blank" rel="noopener">Sakura</a> for Hugo
+  </p>
+</div>

@@ -1,0 +1,12 @@
+{{ define "main" }}
+  <div class="content-card">
+    <div class="taxonomy-list">
+      {{ range .Pages }}
+        <a href="{{ .RelPermalink }}" class="taxonomy-item">
+          <span class="taxonomy-name">{{ .Title }}</span>
+          <span class="taxonomy-count">{{ len .Pages }}</span>
+        </a>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}

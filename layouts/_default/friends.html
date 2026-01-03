@@ -1,0 +1,26 @@
+{{ define "main" }}
+  <div class="content-card">
+    <div class="page-content prose">
+      {{ .Content }}
+    </div>
+
+    {{- with site.Params.friends -}}
+    <div class="friends-grid">
+      {{- range . -}}
+      <a href="{{ .url }}" class="friend-card" target="_blank" rel="noopener">
+        <div class="friend-card__bg"></div>
+        <div class="friend-card__content">
+          <div class="friend-card__info">
+            <h3 class="friend-card__name">{{ .name }}</h3>
+            <p class="friend-card__desc">{{ .desc }}</p>
+          </div>
+          <div class="friend-card__avatar">
+            <img src="{{ .avatar }}" alt="{{ .name }}" loading="lazy">
+          </div>
+        </div>
+      </a>
+      {{- end -}}
+    </div>
+    {{- end -}}
+  </div>
+{{ end }}

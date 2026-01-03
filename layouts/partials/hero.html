@@ -1,0 +1,16 @@
+{{- /* Hero Section for Home Page */ -}}
+<section class="hero">
+  {{- $heroBg := site.Params.hero.background | default "/images/banner.webp" -}}
+  <img class="hero__background" src="{{ $heroBg }}" alt="" fetchpriority="high" loading="eager">
+  <div class="hero__overlay"></div>
+  <div class="hero__content">
+    <h1 class="hero__title">{{ site.Params.hero.title | default site.Title }}</h1>
+    <p class="hero__subtitle">{{ site.Params.hero.subtitle | default site.Params.subtitle | default site.Params.description }}</p>
+  </div>
+  <div class="hero__scroll" onclick="window.scrollTo({top: document.querySelector('.site-main').offsetTop, behavior: 'smooth'})">
+    <svg viewBox="0 0 24 24" width="32" height="32">
+      <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+    </svg>
+  </div>
+</section>
+

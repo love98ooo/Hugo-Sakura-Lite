@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="sakura-theme">
+  <div class="site-wrapper">
+    <div class="site-header">
+      {{ partial "header.html" . }}
+    </div>
+    
+    <div class="site-main">
+      <div class="container">
+        <div class="error-404">
+          <div class="error-404__content">
+            <h1 class="error-404__code">404</h1>
+            <p class="error-404__message">页面走丢了...</p>
+            <p class="error-404__description">抱歉，您访问的页面不存在或已被移除</p>
+            <a href="{{ "/" | relURL }}" class="error-404__button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              返回首页
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer class="site-footer">
+      {{ partial "footer.html" . }}
+    </footer>
+  </div>
+  
+  {{ partialCached "head/js.html" . }}
+</body>
+</html>
+
+<style>
+.error-404 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--spacing-2xl);
+  text-align: center;
+}
+
+.error-404__content {
+  max-width: 400px;
+}
+
+.error-404__code {
+  font-size: 8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0.9;
+}
+
+.error-404__message {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+.error-404__description {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--spacing-xl);
+}
+
+.error-404__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.error-404__button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  color: #fff;
+}
+
+.error-404__button svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .error-404__code {
+    font-size: 5rem;
+  }
+  
+  .error-404__message {
+    font-size: 1.25rem;
+  }
+}
+</style>

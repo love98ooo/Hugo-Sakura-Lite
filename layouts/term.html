@@ -1,0 +1,13 @@
+{{ define "main" }}
+  <div class="term-info">
+    <span class="term-count">共 {{ len .Pages }} 篇文章</span>
+  </div>
+  
+  <div class="post-list">
+    {{ range $index, $page := .Pages }}
+      {{ partial "post-card.html" (dict "page" $page "index" $index) }}
+    {{ end }}
+  </div>
+  
+  {{ template "_internal/pagination.html" . }}
+{{ end }}

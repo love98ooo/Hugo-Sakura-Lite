@@ -1,0 +1,61 @@
+{{ define "main" }}
+  <div class="page-with-sidebar">
+    <article class="content-card main-content">
+      <div class="page-content prose">
+        {{ .Content }}
+        {{- /* Q.E.D. */ -}}
+        <div class="article-qed">
+          <span class="qed-text">Q.E.D.</span>
+          <svg class="qed-icon" viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M11,16.5L6.5,12L7.91,10.59L11,13.67L16.59,8.09L18,9.5L11,16.5Z"/>
+          </svg>
+        </div>
+      </div>
+      
+      {{- /* Article Footer */ -}}
+      <footer class="article-footer">
+
+        {{- /* CC License */ -}}
+        <div class="article-license">
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer" class="license-text">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1792 1792" class="license-icon"><path fill="currentColor" d="M605 1233q153 0 257-104q14-18 3-36l-45-82q-6-13-24-17q-16-2-27 11l-4 3q-4 4-11.5 10t-17.5 13.5t-23.5 14.5t-28.5 13t-33.5 9.5t-37.5 3.5q-76 0-125-50t-49-127q0-76 48-125.5T609 720q37 0 71.5 14t50.5 28l16 14q11 11 26 10q16-2 24-14l53-78q13-20-2-39q-3-4-11-12t-30-23.5t-48.5-28T691 569t-86-10q-148 0-246 96.5T261 896q0 146 97 241.5t247 95.5zm630 0q153 0 257-104q14-18 4-36l-45-82q-8-14-25-17q-16-2-27 11l-4 3q-4 4-11.5 10t-17.5 13.5t-23.5 14.5t-28.5 13t-33.5 9.5t-37.5 3.5q-76 0-125-50t-49-127q0-76 48-125.5t122-49.5q37 0 71.5 14t50.5 28l16 14q11 11 26 10q16-2 24-14l53-78q13-20-2-39q-3-4-11-12t-30-23.5t-48.5-28T1321 569t-86-10q-147 0-245.5 96.5T891 896q0 146 97 241.5t247 95.5zM896 160q-150 0-286 58.5t-234.5 157t-157 234.5T160 896t58.5 286t157 234.5t234.5 157t286 58.5t286-58.5t234.5-157t157-234.5t58.5-286t-58.5-286t-157-234.5t-234.5-157T896 160zm0-160q182 0 348 71t286 191t191 286t71 348t-71 348t-191 286t-286 191t-348 71t-348-71t-286-191t-191-286T0 896t71-348t191-286T548 71T896 0z"></path></svg>
+            <span>知识共享署名-非商业使用-相同方式共享 4.0 国际 (CC BY-NC-SA 4.0)</span>
+          </a>
+          {{- /* Tags and Share */ -}}
+          {{ if or .Params.tags (not .Params.disableShare) }}
+          <div class="article-meta-footer">
+            {{- /* Tags */ -}}
+            {{ with .Params.tags }}
+            <div class="article-tags">
+              <svg class="tags-icon" viewBox="0 0 24 24" width="18" height="18">
+                <path fill="currentColor" d="M5.5,7A1.5,1.5 0 0,1 4,5.5A1.5,1.5 0 0,1 5.5,4A1.5,1.5 0 0,1 7,5.5A1.5,1.5 0 0,1 5.5,7M21.41,11.58L12.41,2.58C12.05,2.22 11.55,2 11,2H4C2.89,2 2,2.89 2,4V11C2,11.55 2.22,12.05 2.59,12.41L11.58,21.41C11.95,21.77 12.45,22 13,22C13.55,22 14.05,21.77 14.41,21.41L21.41,14.41C21.78,14.05 22,13.55 22,13C22,12.44 21.77,11.94 21.41,11.58Z"/>
+              </svg>
+              {{ range . }}
+              <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}" class="tag-item">{{ . }}</a>
+              {{ end }}
+            </div>
+            {{ end }}
+  
+            {{- /* Share */ -}}
+            {{ if not .Params.disableShare }}
+            <div class="article-share">
+              <button class="share-btn" aria-label="分享" title="复制链接">
+                <svg class="share-icon" viewBox="0 0 24 24" width="18" height="18">
+                  <path fill="currentColor" d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z"/>
+                </svg>
+              </button>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+
+        {{ end }}
+      </footer>
+    </article>
+
+    {{- partial "toc.html" . -}}
+  </div>
+
+  {{- /* Comments Section */ -}}
+  {{ partial "comments.html" . }}
+{{ end }}

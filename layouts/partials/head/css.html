@@ -1,0 +1,18 @@
+{{- $cssFiles := slice "css/base.css" "css/header.css" "css/posts.css" "css/content.css" "css/sections.css" "css/components.css" "css/toc.css" }}
+{{- $resources := slice }}
+{{- range $cssFiles }}
+  {{- with resources.Get . }}
+    {{- $resources = $resources | append . }}
+  {{- end }}
+{{- end }}
+
+{{- if gt (len $resources) 0 }}
+  {{- $main := resources.Concat "main.css" $resources }}
+  {{- if hugo.IsDevelopment }}
+    <link rel="stylesheet" href="{{ $main.RelPermalink }}">
+  {{- else }}
+    {{- with $main | minify | fingerprint }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{- end }}
+  {{- end }}
+{{- end }}

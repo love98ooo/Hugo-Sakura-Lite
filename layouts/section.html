@@ -1,0 +1,15 @@
+{{ define "main" }}
+  {{ with .Content }}
+    <div class="content-card section-description">
+      {{ . }}
+    </div>
+  {{ end }}
+  
+  <div class="post-list">
+    {{ range $index, $page := .Pages }}
+      {{ partial "post-card.html" (dict "page" $page "index" $index) }}
+    {{ end }}
+  </div>
+  
+  {{ template "_internal/pagination.html" . }}
+{{ end }}

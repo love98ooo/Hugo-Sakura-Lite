@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.LanguageCode }}" dir="{{ or site.Language.LanguageDirection `ltr` }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="sakura-theme{{ if .IsHome }} is-home{{ end }}">
+  <div class="site-wrapper">
+    {{- /* Header */ -}}
+    <header class="site-header">
+      {{ partial "header.html" . }}
+    </header>
+    
+    {{- /* Banner - 首页用 hero，其他页面用 page-banner */ -}}
+    {{- if .IsHome -}}
+      {{ partial "hero.html" . }}
+    {{- else -}}
+      {{ partial "page-banner.html" . }}
+    {{- end -}}
+    
+    {{- /* Main Content */ -}}
+    <main class="site-main">
+      <div class="container">
+        {{ block "main" . }}{{ end }}
+      </div>
+    </main>
+    
+    {{- /* Footer */ -}}
+    <footer class="site-footer">
+      {{ partial "footer.html" . }}
+    </footer>
+  </div>
+  
+  {{ partialCached "head/js.html" . }}
+</body>
+</html>

@@ -1,0 +1,76 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ printf "%s | %s" .Title site.Title }}{{ end }}</title>
+
+{{- /* Meta Description */ -}}
+{{ with .Description | default .Summary | default site.Params.description }}
+<meta name="description" content="{{ . | plainify | truncate 160 }}">
+{{ end }}
+
+{{- /* Open Graph */ -}}
+<meta property="og:title" content="{{ .Title | default site.Title }}">
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+{{ with .Description | default .Summary | default site.Params.description }}
+<meta property="og:description" content="{{ . | plainify | truncate 200 }}">
+{{ end }}
+
+{{- /* Cover Image for OG */ -}}
+{{- $ogImage := "" -}}
+{{- with .Params.cover -}}
+  {{- with .image -}}
+    {{- $ogImage = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $ogImage -}}
+  {{- with .Params.banner -}}
+    {{- $ogImage = . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $ogImage -}}
+  {{- with site.Params.ogImage -}}
+    {{- $ogImage = . -}}
+  {{- end -}}
+{{- end -}}
+{{ with $ogImage }}
+<meta property="og:image" content="{{ . }}">
+{{ end }}
+
+{{- /* Twitter Card */ -}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ .Title | default site.Title }}">
+{{ with .Description | default .Summary | default site.Params.description }}
+<meta name="twitter:description" content="{{ . | plainify | truncate 200 }}">
+{{ end }}
+{{ with $ogImage }}
+<meta name="twitter:image" content="{{ . }}">
+{{ end }}
+
+{{- /* Highlight.js for code syntax highlighting */ -}}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)" fetchpriority="low">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)" fetchpriority="low">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+
+{{- /* Mermaid.js for diagrams */ -}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js" fetchpriority="low" defer></script>
+
+{{- /* Favicon */ -}}
+<link rel="icon" href="{{ `/favicon.ico` | default `/favicon.png` | relURL }}" type="image/x-icon">
+
+{{- /* RSS */ -}}
+{{ with .OutputFormats.Get "RSS" }}
+<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .RelPermalink }}">
+{{ end }}
+
+{{- /* Canonical */ -}}
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* Theme Color */ -}}
+<meta name="theme-color" content="#7eba52">
+
+{{ partialCached "head/css.html" . }}
+
+{{- /* Extend Head - allows users to add custom content */ -}}
+{{ partial "extend_head.html" . }}
