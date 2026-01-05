@@ -48,13 +48,15 @@
 <meta name="twitter:image" content="{{ . }}">
 {{ end }}
 
-{{- /* Highlight.js for code syntax highlighting */ -}}
+{{- /* Highlight.js for code syntax highlighting - 只在文章页面加载 */ -}}
+{{- if and .IsPage (not .IsHome) -}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="(prefers-color-scheme: dark)" fetchpriority="low">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" media="(prefers-color-scheme: light)" fetchpriority="low">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
 
-{{- /* Mermaid.js for diagrams */ -}}
+{{- /* Mermaid.js for diagrams - 只在文章页面加载 */ -}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js" fetchpriority="low" defer></script>
+{{- end -}}
 
 {{- /* Favicon */ -}}
 <link rel="icon" href="{{ `/favicon.ico` | default `/favicon.png` | relURL }}" type="image/x-icon">
@@ -70,7 +72,8 @@
 {{- /* Theme Color */ -}}
 <meta name="theme-color" content="#7eba52">
 
-{{ partialCached "head/css.html" . }}
+{{- /* CSS - 按页面类型按需加载 */ -}}
+{{ partial "head/css.html" . }}
 
 {{- /* Extend Head - allows users to add custom content */ -}}
 {{ partial "extend_head.html" . }}

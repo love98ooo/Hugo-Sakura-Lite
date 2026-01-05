@@ -35,6 +35,19 @@
   flex: 0 0 55%;
   height: 100%;
   overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 0%,
+    var(--color-border) 50%,
+    var(--color-border-light) 100%
+  );
+  background-size: 200% 100%;
+  animation: img-shimmer 1.5s ease-in-out infinite;
+}
+
+.post-card__thumb.is-loaded {
+  background: none;
+  animation: none;
 }
 
 .post-card__thumb-link {
@@ -46,7 +59,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), opacity var(--transition-normal);
+  opacity: 0;
+}
+
+.post-card__image.is-loaded {
+  opacity: 1;
 }
 
 .post-card:hover .post-card__image {

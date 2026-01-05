@@ -125,34 +125,7 @@ img {
   height: auto;
 }
 
-/* Image loading animation */
-.img-loading {
-  position: relative;
-  background: linear-gradient(
-    90deg,
-    var(--color-border-light) 0%,
-    var(--color-border) 50%,
-    var(--color-border-light) 100%
-  );
-  background-size: 200% 100%;
-  animation: img-shimmer 1.5s ease-in-out infinite;
-}
-
-.img-loading img {
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.img-loading.is-loaded img,
-img.is-loaded {
-  opacity: 1;
-}
-
-img:not(.is-loaded):not(.no-loading-animation) {
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
+/* Image loading animation - only for hero, post-card, page-banner */
 @keyframes img-shimmer {
   0% {
     background-position: 200% 0;

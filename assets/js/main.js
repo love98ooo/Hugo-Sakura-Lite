@@ -136,38 +136,45 @@
 
   /**
    * Lazy Loading for Images with Loading Animation
+   * Only applies to: .hero, .post-card, .page-banner
    */
   function initLazyLoading() {
-    // Handle all images with loading animation
-    const allImages = document.querySelectorAll('img:not(.no-loading-animation)');
-
-    allImages.forEach(img => {
-      // Add loading wrapper for container-based shimmer effect
-      const parent = img.parentElement;
-      if (parent && !parent.classList.contains('img-loading')) {
-        parent.classList.add('img-loading');
-      }
-
-      // Check if image is already loaded (cached)
+    // Handle post-card images
+    document.querySelectorAll('.post-card__thumb img').forEach(img => {
+      const thumb = img.closest('.post-card__thumb');
       if (img.complete && img.naturalHeight !== 0) {
         img.classList.add('is-loaded');
-        if (parent) parent.classList.add('is-loaded');
+        if (thumb) thumb.classList.add('is-loaded');
       } else {
-        // Add load event listener
         img.addEventListener('load', function() {
           this.classList.add('is-loaded');
-          if (this.parentElement) {
-            this.parentElement.classList.add('is-loaded');
-          }
+          const thumb = this.closest('.post-card__thumb');
+          if (thumb) thumb.classList.add('is-loaded');
         });
-
-        // Handle error case - still show placeholder
         img.addEventListener('error', function() {
           this.classList.add('is-loaded');
-          if (this.parentElement) {
-            this.parentElement.classList.add('is-loaded');
-          }
+          const thumb = this.closest('.post-card__thumb');
+          if (thumb) thumb.classList.add('is-loaded');
         });
+      }
+    });
+
+    // Handle page-banner (uses background-image, so we need to detect load differently)
+    document.querySelectorAll('.page-banner').forEach(banner => {
+      const bg = banner.querySelector('.page-banner__background');
+      if (bg) {
+        const bgImage = getComputedStyle(bg).backgroundImage;
+        if (bgImage && bgImage !== 'none') {
+          const url = bgImage.replace(/url\(['"]?(.+?)['"]?\)/, '$1');
+          const img = new Image();
+          img.onload = () => banner.classList.add('is-loaded');
+          img.onerror = () => banner.classList.add('is-loaded');
+          img.src = url;
+        } else {
+          banner.classList.add('is-loaded');
+        }
+      } else {
+        banner.classList.add('is-loaded');
       }
     });
 

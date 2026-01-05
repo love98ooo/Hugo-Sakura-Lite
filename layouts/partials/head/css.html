@@ -1,18 +1,68 @@
-{{- $cssFiles := slice "css/base.css" "css/header.css" "css/posts.css" "css/content.css" "css/sections.css" "css/components.css" "css/toc.css" }}
-{{- $resources := slice }}
-{{- range $cssFiles }}
+{{- /* ========================================
+    CSS 分层按需加载策略
+    - core: 基础样式，所有页面都需要
+    - posts: 文章列表样式，首页/归档/分类/标签页需要
+    - content: 文章内容样式，单篇文章页需要
+    - toc: 目录样式，有目录的页面按需加载
+    ======================================== */ -}}
+
+{{- /* 核心样式 - 所有页面必须加载 */ -}}
+{{- $coreFiles := slice "css/base.css" "css/header.css" "css/sections.css" "css/components.css" }}
+{{- $coreResources := slice }}
+{{- range $coreFiles }}
   {{- with resources.Get . }}
-    {{- $resources = $resources | append . }}
+    {{- $coreResources = $coreResources | append . }}
   {{- end }}
 {{- end }}
 
-{{- if gt (len $resources) 0 }}
-  {{- $main := resources.Concat "main.css" $resources }}
+{{- if gt (len $coreResources) 0 }}
+  {{- $core := resources.Concat "css/core.css" $coreResources }}
   {{- if hugo.IsDevelopment }}
-    <link rel="stylesheet" href="{{ $main.RelPermalink }}">
+    <link rel="stylesheet" href="{{ $core.RelPermalink }}">
   {{- else }}
-    {{- with $main | minify | fingerprint }}
+    {{- with $core | minify | fingerprint }}
       <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* 文章列表样式 - 首页、归档、分类、标签页需要 */ -}}
+{{- $needsPosts := or .IsHome (eq .Kind "taxonomy") (eq .Kind "term") (eq .Section "archives") }}
+{{- if $needsPosts }}
+  {{- with resources.Get "css/posts.css" }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | minify | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* 文章内容样式 - 单篇文章/页面需要 */ -}}
+{{- $needsContent := and .IsPage (not .IsHome) }}
+{{- if $needsContent }}
+  {{- with resources.Get "css/content.css" }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | minify | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- /* 目录样式 - 只在有目录的页面加载 */ -}}
+{{- if and .IsPage .TableOfContents }}
+  {{- with resources.Get "css/toc.css" }}
+    {{- if hugo.IsDevelopment }}
+      <link rel="stylesheet" href="{{ .RelPermalink }}">
+    {{- else }}
+      {{- with . | minify | fingerprint }}
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
