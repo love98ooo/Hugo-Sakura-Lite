@@ -54,7 +54,9 @@
 | | 平滑滚动 | 锚点链接平滑滚动 |
 | | 键盘快捷键 | 支持 Escape 关闭菜单等 |
 | **性能优化** | CSS 按需加载 | 首页仅加载核心样式，文章页按需加载内容样式 |
+| | CSS 异步加载 | 非关键样式（如文章列表）采用异步加载策略，提升 LCP 指标 |
 | | JS 异步加载 | Highlight.js 和 Mermaid.js 仅在文章页异步加载 |
+| | 封面图片自动压缩 | 支持使用 wsrv.nl 服务自动压缩和裁剪文章封面图 |
 
 ---
 
@@ -107,6 +109,16 @@ params:
 
   # Open Graph 默认图片
   ogImage: "/images/og-image.jpg"
+
+  # 图片优化配置（可选）
+  imageOptimization:
+    enabled: true
+    wsrv:
+      enabled: true
+      postCard:
+        width: 600
+        height: 300
+        quality: 85
 
   # 友链配置
   friends:

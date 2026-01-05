@@ -15,15 +15,23 @@
   {{- end -}}
 {{- end -}}
 
+{{- $optimizedImage := $coverImage -}}
+{{- if and $coverImage (site.Params.imageOptimization.enabled) (site.Params.imageOptimization.wsrv.enabled) -}}
+  {{- $width := site.Params.imageOptimization.wsrv.postCard.width | default 600 -}}
+  {{- $height := site.Params.imageOptimization.wsrv.postCard.height | default 300 -}}
+  {{- $quality := site.Params.imageOptimization.wsrv.postCard.quality | default 85 -}}
+  {{- $optimizedImage = printf "https://wsrv.nl/?url=%s&w=%d&h=%d&q=%d&fit=cover&output=webp" $coverImage $width $height $quality -}}
+{{- end -}}
+
 <article class="post-card{{ if $isEven }} post-card--even{{ else }} post-card--odd{{ end }}">
-  {{- if $coverImage }}
+  {{- if $optimizedImage }}
   <div class="post-card__thumb">
     <a href="{{ $page.RelPermalink }}" class="post-card__thumb-link">
-      <img src="{{ $coverImage }}" alt="{{ $page.Title }}" class="post-card__image" loading="lazy">
+      <img src="{{ $optimizedImage }}" alt="{{ $page.Title }}" class="post-card__image" loading="lazy">
     </a>
   </div>
   {{- end }}
-  
+
   <div class="post-card__content">
     <div class="post-card__meta">
       <time class="post-card__date" datetime="{{ $page.Date.Format `2006-01-02T15:04:05-07:00` }}">
@@ -33,11 +41,11 @@
         Posted on {{ $page.Date.Format "01-02-2006" }}
       </time>
     </div>
-    
+
     <h2 class="post-card__title">
       <a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a>
     </h2>
-    
+
     <div class="post-card__stats">
       {{- with $page.Params.categories }}
       {{- $cat := index . 0 }}
@@ -48,7 +56,7 @@
         {{ $cat }}
       </a>
       {{- end }}
-      
+
       {{- with $page.Params.tags }}
       {{- $tag := index . 0 }}
       <a href="{{ `/tags/` | relURL }}{{ $tag | urlize }}/" class="post-card__tag">
@@ -59,11 +67,11 @@
       </a>
       {{- end }}
     </div>
-    
+
     <p class="post-card__summary">
       {{ $page.Summary | plainify | truncate 150 }}
     </p>
-    
+
     <div class="post-card__more">
       <span class="post-card__dots">• • •</span>
     </div>

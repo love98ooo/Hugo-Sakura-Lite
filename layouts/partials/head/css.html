@@ -31,10 +31,12 @@
 {{- if $needsPosts }}
   {{- with resources.Get "css/posts.css" }}
     {{- if hugo.IsDevelopment }}
-      <link rel="stylesheet" href="{{ .RelPermalink }}">
+      <link rel="stylesheet" href="{{ .RelPermalink }}" media="print" onload="this.media='all'">
+      <noscript><link rel="stylesheet" href="{{ .RelPermalink }}"></noscript>
     {{- else }}
       {{- with . | minify | fingerprint }}
-        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" media="print" onload="this.media='all'">
+        <noscript><link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous"></noscript>
       {{- end }}
     {{- end }}
   {{- end }}
